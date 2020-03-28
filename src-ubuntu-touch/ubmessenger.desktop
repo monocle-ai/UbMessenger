@@ -1,6 +1,6 @@
 [Desktop Entry]
-Name=CChat
-Exec=webapp-container --app-id="cchat.henri2h" $@ www/index.html
+Name=UbMessenger
+Exec=webapp-container --app-id="ubmessenger.henri2h" $@ www/index.html
 Icon=assets/logo.svg
 Terminal=false
 Type=Application
