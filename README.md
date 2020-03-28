@@ -38,7 +38,7 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 # Ubuntu touch :
 
 ## Build and deploy to device
-```bash
+```sh
 yarn run build-ubtouch
 cd src-ubuntu-touch
 clickable
