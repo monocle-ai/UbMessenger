@@ -1,5 +1,11 @@
-# cchat
-use the plugin : [vue-cli-plugin-cordava](https://github.com/m0dch3n/vue-cli-plugin-cordova)
+# UbMessenger (Experimental)
+
+This is a port of messenger to ubunut touch.
+
+WARNING : this project use a [custom bridge](https://github.com/Henri2h/UbTouchMessBridge) in order to connect to messenger and use push notification.
+
+
+
 ## Project setup
 ```
 yarn install
@@ -24,9 +30,21 @@ yarn lint
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
 
+## Plugins used :
 
-# Usage (copied from the cordova plugin readme)
+* [vue-cli-plugin-cordava](https://github.com/m0dch3n/vue-cli-plugin-cordova)
 
+
+# Ubuntu touch :
+
+## Build and deploy to device
+```bash
+yarn run build-ubtouch
+cd src-ubuntu-touch
+clickable
+```
+# Cross platform : Cordova : (copied from the cordova plugin readme)
+This project support cross platform build using cordova.
 
 ## Usage
 Prepare
