@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "1069785852105",
+    "firebase_url": "https://cchat-cordova.firebaseio.com",
+    "project_id": "cchat-cordova",
+    "storage_bucket": "cchat-cordova.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1069785852105:android:0af25f94f86d0367884518",
+        "android_client_info": {
+          "package_name": "fr.henri2h.cchat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1069785852105-kqng1bj5rpjjug68c35qst5918b4pbab.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB4RFRigmZAX12Y7NbePu4OfCBOwoEgcOE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1069785852105-kqng1bj5rpjjug68c35qst5918b4pbab.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1069785852105:android:7069849a1cf20e80884518",
+        "android_client_info": {
+          "package_name": "fr.henri2h.cchatvue"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1069785852105-kqng1bj5rpjjug68c35qst5918b4pbab.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB4RFRigmZAX12Y7NbePu4OfCBOwoEgcOE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1069785852105-kqng1bj5rpjjug68c35qst5918b4pbab.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
