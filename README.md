@@ -4,6 +4,17 @@ This is a port of messenger to ubunut touch.
 
 WARNING : this project use a [custom bridge](https://github.com/Henri2h/UbTouchMessBridge) in order to connect to messenger and use push notification.
 
+# Working :
+
+* [x] Display threads list
+* [x] Display thread history
+* [ ] Display images
+* [ ] Display reaction
+* [ ] Send read indication
+* [ ] Send typing indication
+* [x] Send text messages
+* [ ] Send pictures messages
+* [ ] Push notification : work in progress, partially implemented
 
 
 ## Project setup
