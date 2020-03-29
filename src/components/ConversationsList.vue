@@ -1,32 +1,44 @@
 <template>
   <div>
     <NavBar PageName="UbMessenger" SecondActionName="Settings" SecondActionPath="Settings" />
-   
+
     <section>
       <div id="app">
         <div class="conv-list">
           <a
-            class="conv-item "
+            class="conv-item"
             href="#"
             @click="clickedPlace(conv)"
             :key="conv.ConvID"
             v-for="conv in convs"
           >
-
-
-            <div class="has-text-black">
-              <h2 class="has-text-weight-bold is-size-5">{{ conv.ConvName }}</h2>
-              <span class="has-text-weight-bold">{{ conv.last_message_user }}</span>
-              : {{ conv.last_message_text }}
-            </div>
+            <article class="media">
+              <figure class="media-left">
+                <p class="image is-64x64">
+                  <img :src="conv.imageSrc" />
+                </p>
+              </figure>
+              <div class="media-content">
+                <div class="content has-text-black">
+                  <p>
+                    <strong class="is-size-5">{{conv.ConvName}}</strong> 
+                    <small>{{conv.last_message_date}}</small>
+                    <br />
+                    <span v-bind:class="{'has-text-weight-bold':conv.unreadCount > 0}">@{{conv.last_message_user}} : {{conv.last_message_text}}</span> 
+                  </p>
+                </div>
+              </div>
+              <div class="media-right">
+                {{conv.unreadCount}}
+              </div>
+            </article>
           </a>
         </div>
-
       </div>
     </section>
     <section class="section">
-        <p>{{message}}</p>App version :
-        <strong>{{version}}</strong>
+      <p>{{message}}</p>App version :
+      <strong>{{version}}</strong>
     </section>
   </div>
 </template>
@@ -60,9 +72,11 @@ export default {
   },
   methods: {
     loadConversationList() {
-
       Client.loadConversationsList().then(result => {
-        if (localStorage.token === undefined || localStorage.url === undefined) {
+        if (
+          localStorage.token === undefined ||
+          localStorage.url === undefined
+        ) {
           // cannot access the server properly
           console.log("Sent back to login");
 
@@ -78,23 +92,27 @@ export default {
         }
       });
 
-      MClient.listConversations().then(result => {
+      MClient.listConversations().then(async (result) => {
         if (result == null || result.success == false) {
           this.message = "Problem loading messenger messages";
         } else {
           // adapt data in order to be displayed
-          result.convs.forEach(element => {
+          for (let index = 0; index < result.convs.length; index++) {
+            const element = result.convs[index];
+
             var data = {
               ConvName: element.name,
               ConvID: element.threadID,
               last_message_text: element.snippet,
-              last_message_user: element.snippetSender,
-              convType: "messenger"
+              last_message_user: await MClient.getUserName(element.snippetSender),
+              imageSrc: element.imageSrc,
+              convType: "messenger",
+              unreadCount: element.unreadCount
             };
 
             // update list
             this.convs.push(data);
-          });
+          }
 
           //console.log(this.convs);
           this.message = "";
@@ -115,14 +133,14 @@ export default {
     },
     clickedPlace(conv) {
       localStorage.convID = conv.ConvID;
-      localStorage.convName = conv.ConvName;      
+      localStorage.convName = conv.ConvName;
       localStorage.convType = "cchat"; // default
-      
+
       // change conv type if messenger
-      if(conv.convType == "messenger"){
+      if (conv.convType == "messenger") {
         localStorage.convType = "messenger";
       }
-      
+
       //changePage();
       this.$router.push({ name: "ConvView", params: { ConvID: conv.ConvID } });
     }
@@ -132,14 +150,13 @@ export default {
 
 
 <style scoped>
-.conv-list{
+.conv-list {
   border-radius: 4px;
 }
 
-.conv-item{
+.conv-item {
   background-color: white;
   display: block;
-padding: 0.5em 1em;
+  padding: 0.5em 1em;
 }
-
 </style>
