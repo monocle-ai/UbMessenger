@@ -14,11 +14,13 @@ let client = {
             })
             .then(response => {
                 //console.log(response);
+                if(response.success == false){
+                    return response;
+                }
                 return { "convs": response, "success": true };
             })
             .catch(err => {
-                console.log(err);
-                return { "success": false };
+                return { "success": false, error:err };
             });
     },
     async getThreadHistory(threadID) {
@@ -29,7 +31,7 @@ let client = {
             },
             "body": JSON.stringify({
                 "token": localStorage.token,
-                "threadID":threadID
+                "threadID": threadID
             })
         })
             .then(response => {
@@ -40,8 +42,7 @@ let client = {
                 return { "convs": response, "success": true };
             })
             .catch(err => {
-                console.log(err);
-                return { "success": false };
+                return { "success": false, "error":err };
             });
     },
     async getUserInfo(userID) {
@@ -52,7 +53,7 @@ let client = {
             },
             "body": JSON.stringify({
                 "token": localStorage.token,
-                "id":userID
+                "id": userID
             })
         })
             .then(response => {
@@ -76,8 +77,8 @@ let client = {
             },
             "body": JSON.stringify({
                 "token": localStorage.token,
-                "threadID":threadID,
-                "text":text
+                "threadID": threadID,
+                "text": text
             })
         })
             .then(response => {
@@ -91,7 +92,28 @@ let client = {
                 console.log(err);
                 return { "success": false };
             });
-    }    
+    },
+    async getUserName(userID) {
+        if (localStorage.usernamesList == undefined) {
+        localStorage.usernamesList = JSON.stringify({});
+            console.log("reste");
+        }
+        var list = JSON.parse(localStorage.usernamesList);
+        
+        if (list[userID] === undefined) {
+            var udata = await this.getUserInfo(userID);
+
+            if (udata.success) {
+                list[userID] = udata.user[userID].name;
+
+                localStorage.usernamesList = JSON.stringify(list);
+                return list[userID];
+            }
+        }
+        else {
+            return list[userID];
+        }
+    }
 };
 
 export default client;
