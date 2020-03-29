@@ -25,7 +25,11 @@ export default {
   components: { NavBar },
   methods: {
     resetName: function() {
-      localStorage.username = "";
+      
+      localStorage.removeItem("token");
+      localStorage.removeItem("url");
+
+console.log(localStorage.url);
       this.goStartPage();
     },
     goStartPage() {

@@ -9,7 +9,7 @@ export default {
   name: "App",
   data() {
     return {
-      PageName: "CChat"
+      PageName: "UbMessenger"
     };
   },
   mounted: function() {
