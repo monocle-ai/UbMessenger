@@ -1,12 +1,12 @@
 {
-    "name": "cchat.henri2h",
-    "description": "CChat application",
+    "name": "ubmessenger.henri2h",
+    "description": "Ub messenger",
     "architecture": "@CLICK_ARCH@",
-    "title": "CChat",
+    "title": "UbMessenger",
     "hooks": {
         "cchat": {
-            "apparmor": "cchat.apparmor",
-            "desktop":  "cchat.desktop"
+            "apparmor": "ubmessenger.apparmor",
+            "desktop":  "ubmessenger.desktop"
         }
     },
     "version": "1.0.0",

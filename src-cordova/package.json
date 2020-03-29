@@ -31,9 +31,7 @@
     "cordova-plugin-local-notifications": "^1.0.0",
     "cordova-plugin-zip": "^3.1.0",
     "fs": "0.0.1-security",
-    "phonegap-plugin-multidex": "^1.0.0",
-    "phonegap-plugin-push": "^2.3.0",
-    "sentry-cordova": "^0.17.0"
+    "phonegap-plugin-multidex": "^1.0.0"
   },
   "devDependencies": {
     "cordova-plugin-whitelist": "^1.3.4"
@@ -45,16 +43,7 @@
       "cordova-plugin-local-notification": {},
       "cordova-plugin-file": {},
       "cordova-plugin-file-transfer": {},
-      "cordova-plugin-zip": {},
-      "cordova-plugin-appcenter-analytics": {},
-      "cordova-plugin-appcenter-crashes": {},
-      "cordova-plugin-code-push": {},
-      "phonegap-plugin-push": {
-        "ANDROID_SUPPORT_V13_VERSION": "27.+",
-        "FCM_VERSION": "17.0.+"
-      },
-      "cordova-support-google-services": {},
-      "sentry-cordova": {}
+      "cordova-plugin-zip": {}
     },
     "platforms": [
       "android",
