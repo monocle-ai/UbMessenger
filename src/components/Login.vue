@@ -23,13 +23,15 @@
         </div>
         <br />
 
-        <strong>Password :</strong>
+        <strong>Token :</strong>
         <div class="control has-icons-left">
           <input class="input" type="text" v-model="token" />
           <span class="icon is-small is-left has-text-dark">
             <font-awesome-icon :icon="['fas','lock']" />
           </span>
         </div>
+        {{message}}
+        <br />
         <br />
 
         <div class="buttons">
@@ -42,6 +44,7 @@
 
 <script>
 import NavBar from "@/components/items/NavBar.vue";
+import MClient from "@/js/messengerClient";
 
 export default {
   name: "Login",
@@ -49,29 +52,36 @@ export default {
 
   data() {
     return {
-      selectedConv: null,
-      convs: [],
       version: localStorage.version,
       url: "https://yourdomain.fr:8073/",
-      token: ""
+      token: "",
+      message: ""
     };
   },
   created: function() {
     if (localStorage.token !== undefined && localStorage.url !== undefined) {
-      // token is set
       this.changePage();
     }
     // else, stay here and ask use to fill token and url
   },
   methods: {
-    login() {
+    async login() {
       localStorage.url = this.url;
       localStorage.token = this.token;
 
-      // TODO : check if token and url are valid
-      this.changePage();
-    },
+      var result = await MClient.listConversations();
+      console.log(result.success);
 
+      // TODO : check if token and url are valid
+      if (result.success) {
+        this.changePage();
+      } else {
+        // not valid...
+        localStorage.removeItem("url");
+        localStorage.removeItem("token");
+        this.message = result.error;
+      }
+    },
 
     // go to the next page
     changePage() {
