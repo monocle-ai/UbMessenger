@@ -1,24 +1,19 @@
 <template>
   <div>
-    <NavBar PageName="CChat" SecondActionName="Settings" SecondActionPath="Settings" />
-    <section class="hero is-primary">
-      <div class="hero-body">
-        <div class="container">
-          <h1 class="title">Welcome in CChat</h1>
-          <h2 class="subtitle">Please select a conversation</h2>
-        </div>
-      </div>
-    </section>
-    <section class="section">
+    <NavBar PageName="UbMessenger" SecondActionName="Settings" SecondActionPath="Settings" />
+   
+    <section>
       <div id="app">
-        <div class="list">
+        <div class="conv-list">
           <a
-            class="list-item list-item-action"
+            class="conv-item "
             href="#"
             @click="clickedPlace(conv)"
             :key="conv.ConvID"
             v-for="conv in convs"
           >
+
+
             <div class="has-text-black">
               <h2 class="has-text-weight-bold is-size-5">{{ conv.ConvName }}</h2>
               <span class="has-text-weight-bold">{{ conv.last_message_user }}</span>
@@ -27,9 +22,11 @@
           </a>
         </div>
 
+      </div>
+    </section>
+    <section class="section">
         <p>{{message}}</p>App version :
         <strong>{{version}}</strong>
-      </div>
     </section>
   </div>
 </template>
@@ -65,10 +62,11 @@ export default {
     loadConversationList() {
 
       Client.loadConversationsList().then(result => {
-        if (localStorage.getItem("username") === null) {
+        if (localStorage.token === undefined || localStorage.url === undefined) {
+          // cannot access the server properly
           console.log("Sent back to login");
+
           this.$router.push({ name: "Login" });
-          window.AppCenter.Analytics.trackEvent("Sent back to login");
         }
 
         if (result == null || result.success == false) {
@@ -131,3 +129,17 @@ export default {
   }
 };
 </script>
+
+
+<style scoped>
+.conv-list{
+  border-radius: 4px;
+}
+
+.conv-item{
+  background-color: white;
+  display: block;
+padding: 0.5em 1em;
+}
+
+</style>

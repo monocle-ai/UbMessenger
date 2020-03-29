@@ -1,15 +1,12 @@
-var serverName = "https://code.henri2h.fr:8073/";
-var token = "";
-
 let client = {
     async listConversations() {
-        return await fetch(serverName + "listConversations", {
+        return await fetch(localStorage.url + "listConversations", {
             "method": "POST",
             "headers": {
                 "content-type": "application/json"
             },
             "body": JSON.stringify({
-                "token": token
+                "token": localStorage.token
             })
         })
             .then(response => {
@@ -25,13 +22,13 @@ let client = {
             });
     },
     async getThreadHistory(threadID) {
-        return await fetch(serverName + "getThreadHistory", {
+        return await fetch(localStorage.url + "getThreadHistory", {
             "method": "POST",
             "headers": {
                 "content-type": "application/json"
             },
             "body": JSON.stringify({
-                "token": token,
+                "token": localStorage.token,
                 "threadID":threadID
             })
         })
@@ -48,13 +45,13 @@ let client = {
             });
     },
     async getUserInfo(userID) {
-        return await fetch(serverName + "getUserInfo", {
+        return await fetch(localStorage.url + "getUserInfo", {
             "method": "POST",
             "headers": {
                 "content-type": "application/json"
             },
             "body": JSON.stringify({
-                "token": token,
+                "token": localStorage.token,
                 "id":userID
             })
         })
@@ -72,13 +69,13 @@ let client = {
     },
 
     async sendMessage(threadID, text) {
-        return await fetch(serverName + "sendMessage", {
+        return await fetch(localStorage.url + "sendMessage", {
             "method": "POST",
             "headers": {
                 "content-type": "application/json"
             },
             "body": JSON.stringify({
-                "token": token,
+                "token": localStorage.token,
                 "threadID":threadID,
                 "text":text
             })

@@ -88,7 +88,7 @@ export default {
       loadMaxPosition: -1,
       refreshingConvList: false,
       timer: 1,
-      usernamesList:{}
+      usernamesList: {}
     };
   },
 
@@ -102,32 +102,11 @@ export default {
     console.log(this.ConvName);
 
     // check if username is set
-    if (localStorage.username == "") {
+    if (localStorage.token === undefined || localStorage.url === undefined) {
       this.$router.push({ name: "Login" });
     }
 
-    if (this.convType == "cchat") {
-      // try to load messages from memory
-      this.loadConversation(); // then load data from the internet
-      Client.loadMessages(this.ConvID).then(result => {
-        // load document
-        if (result) {
-          this.loadNewMessages();
-        }
-        this.ScrollToBottom();
-      });
-
-      this.ScrollToBottom();
-
-      // create now timer and privent duplication
-      if (window.timer != null) {
-        clearInterval(window.timer);
-        window.timer = null;
-      }
-      window.timer = setInterval(this.updateConv, 2000); // every 5 seconds
-    } else {
-      this.loadMessenger();
-    }
+    this.loadMessenger();
   },
 
   methods: {
@@ -137,18 +116,19 @@ export default {
     },
 
     loadMessenger() {
-      MClient.getThreadHistory(this.ConvID).then(async (result) => {
+      MClient.getThreadHistory(this.ConvID).then(async result => {
         // load document
         if (result.success) {
           // clean thread history
           this.convElems = [];
           for (let index = 0; index < result.convs.length; index++) {
             const element = result.convs[index];
-             if (this.usernamesList[element.senderID] === undefined) {
+            if (this.usernamesList[element.senderID] === undefined) {
               var udata = await MClient.getUserInfo(element.senderID);
 
               if (udata.success) {
-                this.usernamesList[element.senderID] = udata.user[element.senderID].name;
+                this.usernamesList[element.senderID] =
+                  udata.user[element.senderID].name;
               }
             }
 
@@ -165,7 +145,6 @@ export default {
 
             this.convElems.push(data);
           }
-         
         }
 
         this.ScrollToBottom();

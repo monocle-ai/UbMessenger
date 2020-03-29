@@ -5,8 +5,8 @@
     <section class="hero is-primary">
       <div class="hero-body">
         <div class="container">
-          <h1 class="title">Welcome in CChat</h1>
-          <h2 class="subtitle">Please enter your credentials</h2>
+          <h1 class="title">Welcome in UbMessenger</h1>
+          <h2 class="subtitle">Please enter the server address and credential</h2>
         </div>
       </div>
     </section>
@@ -14,9 +14,9 @@
     <div class="section">
       <h2 class="title">Login :</h2>
       <form id="vue-username" @submit.prevent="login">
-        <strong>Username :</strong>
+        <strong>Server address :</strong>
         <div class="control has-icons-left">
-          <input class="input" type="text" v-model="usernameInput" />
+          <input class="input" type="url" v-model="url" />
           <span class="icon is-small is-left has-text-dark">
             <font-awesome-icon :icon="['fas','user']" />
           </span>
@@ -25,7 +25,7 @@
 
         <strong>Password :</strong>
         <div class="control has-icons-left">
-          <input class="input" type="password" v-model="passwordInput" />
+          <input class="input" type="text" v-model="token" />
           <span class="icon is-small is-left has-text-dark">
             <font-awesome-icon :icon="['fas','lock']" />
           </span>
@@ -33,7 +33,6 @@
         <br />
 
         <div class="buttons">
-          <button v-on:click="register()" class="button is-hidden is-info">Register</button>
           <button v-on:click="login()" class="button is-primary">Login</button>
         </div>
       </form>
@@ -42,7 +41,6 @@
 </template>
 
 <script>
-import Client from "@/js/client.js";
 import NavBar from "@/components/items/NavBar.vue";
 
 export default {
@@ -54,62 +52,26 @@ export default {
       selectedConv: null,
       convs: [],
       version: localStorage.version,
-      usernameInput: "",
-      passwordInput: ""
+      url: "https://yourdomain.fr:8073/",
+      token: ""
     };
   },
   created: function() {
-    if (
-      (localStorage.getItem("username") == null) == false &&
-      localStorage.username != ""
-    ) {
-      // no need to ask for credentials, just connect, get token and go to get to the next page
-      this.connect();
-      this.message = "Please update credentials";
+    if (localStorage.token !== undefined && localStorage.url !== undefined) {
+      // token is set
+      this.changePage();
     }
+    // else, stay here and ask use to fill token and url
   },
   methods: {
     login() {
-      localStorage.username = this.usernameInput;
-      localStorage.password = this.passwordInput;
+      localStorage.url = this.url;
+      localStorage.token = this.token;
 
-      this.connect();
+      // TODO : check if token and url are valid
+      this.changePage();
     },
 
-    register() {
-      console.log("To implement");
-    },
-
-    connect() {
-      var success = true;
-      this.token = "token";
-      if (success) {
-        if (window.canUseCordova) {
-          if (localStorage.firebaseID !== null) {
-            // register firebaseid :
-            console.log("Firebase id from local storage :");
-            Client.connect(localStorage.firebaseID);
-
-            // log it to server
-            window.AppCenter.Analytics.trackEvent("FirebaseID sent to server", {
-              FirebaseID: localStorage.firebaseID,
-              Username: localStorage.username
-            });
-          } else {
-            console.log("FirebaseID not set !!");
-            window.AppCenter.Analytics.trackEvent("FirebaseID not set !!");
-          }
-        } else {
-          console.log("Could not use cordova...");
-        }
-
-        this.changePage();
-      } else {
-        this.message = "Authentification failed";
-        console.log("Authentification failed");
-        window.AppCenter.Analytics.trackEvent("Authentification failed");
-      }
-    },
 
     // go to the next page
     changePage() {
