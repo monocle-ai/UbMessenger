@@ -8,6 +8,16 @@
         </div>
       </div>
     </section>
+  
+    <form class="section" @submit.prevent="setUserid">
+      <strong>User id:</strong>
+      <div class="control has-icons-left">
+        <input class="input" type="text" v-model="userid" />
+        <span class="icon is-small is-left has-text-dark">
+          <font-awesome-icon :icon="['fas','user']" />
+        </span>
+      </div>
+    </form>
 
     <section class="section" id="vue-settings">
       <button class="button is-danger" v-on:click="resetName">Reset name</button>
@@ -20,7 +30,9 @@ import NavBar from "@/components/items/NavBar.vue";
 
 export default {
   data() {
-    return {};
+    return {
+      "userid":localStorage.userid
+    };
   },
   components: { NavBar },
   methods: {
@@ -34,6 +46,9 @@ console.log(localStorage.url);
     },
     goStartPage() {
       this.$router.push({ name: "ConvList" });
+    },
+    setUserid(){
+      localStorage.userid = this.userid;
     }
   }
 };
