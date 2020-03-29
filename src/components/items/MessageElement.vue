@@ -5,6 +5,12 @@
     </div>
 
     <div class="message-container">
+      <div v-bind:class="{'is-hidden':!isText, 'has-text-right':sendByUser}">
+        <strong
+          class="data_message_username"
+          v-bind:class="{'is-hidden':!message.UI_showUsername}"
+        >{{message.Username}}</strong>
+      </div>
       <div class="box-container">
         <div
           class="box"
@@ -35,12 +41,8 @@
             v-bind:class="{'is-hidden':!isText, 'has-text-right':sendByUser}"
           >{{message.Content}}</div>
         </div>
-      </div>
-      <div v-bind:class="{'is-hidden':!isText, 'has-text-right':sendByUser}">
-        <strong
-          class="data_message_username"
-          v-bind:class="{'is-hidden':!message.UI_showUsername}"
-        >{{message.Username}}</strong>
+
+        <div v-for="reaction in message.messageReactions" :key="reaction.userID">{{reaction}}</div>
       </div>
     </div>
   </div>
@@ -65,7 +67,10 @@ export default {
       this.sendByUser = true;
     }
 
-    if (this.message.messenger && this.message.senderID == localStorage.musername) {
+    if (
+      this.message.messenger &&
+      this.message.senderID == localStorage.userid
+    ) {
       this.sendByUser = true;
     }
 

@@ -35,8 +35,7 @@
               <font-awesome-icon :icon="['fas','image']" />
             </button>
           </div>
-
-          <div class="control is-expanded">
+          <form class="control is-expanded" @submit.prevent="sendMessage()">
             <p class="control has-icons-left has-icons-right">
               <input class="input" type="text" v-model="messageComposerText" placeholder="Message" />
               <span class="icon is-small is-left">
@@ -46,8 +45,7 @@
                 <font-awesome-icon :icon="['fas','check']" />
               </span>
             </p>
-          </div>
-
+          </form>
           <div class="control">
             <button class="button is-info" v-on:click="sendMessage()">Send</button>
           </div>
@@ -120,27 +118,21 @@ export default {
         // load document
         if (result.success) {
           // clean thread history
-          this.convElems = [];
           for (let index = 0; index < result.convs.length; index++) {
             const element = result.convs[index];
-            if (this.usernamesList[element.senderID] === undefined) {
-              var udata = await MClient.getUserInfo(element.senderID);
-
-              if (udata.success) {
-                this.usernamesList[element.senderID] =
-                  udata.user[element.senderID].name;
-              }
-            }
 
             var data = {
               DataType: "text",
               Content: element.body,
               ConvID: this.ConvID,
-              Username: this.usernamesList[element.senderID],
+              Username: await MClient.getUserName(element.senderID),
               senderID: element.senderID,
               UI_showUsername: true,
               UI_showDate: true,
-              messenger: true
+              messenger: true,
+              SendDateFormated: element.timestamp,
+              messageReactions: element.messageReactions,
+              isUnread: element.isUnread
             };
 
             this.convElems.push(data);
