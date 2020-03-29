@@ -14,22 +14,24 @@
           >
             <article class="media">
               <figure class="media-left">
-                <p class="image is-64x64">
-                  <img :src="conv.imageSrc" />
+                <p class="image conv-image">
+                  <img class="is-rounded" :src="conv.imageSrc" />
                 </p>
               </figure>
               <div class="media-content">
                 <div class="content has-text-black">
                   <p>
-                    <strong class="is-size-5">{{conv.ConvName}}</strong> 
+                    <strong class="is-size-5">{{conv.ConvName}}</strong>
                     <small>{{conv.last_message_date}}</small>
                     <br />
-                    <span v-bind:class="{'has-text-weight-bold':conv.unreadCount > 0}">@{{conv.last_message_user}} : {{conv.last_message_text}}</span> 
+                    <span
+                      v-bind:class="{'has-text-weight-bold':conv.unreadCount > 0}"
+                    >@{{conv.last_message_user}} : {{conv.last_message_text}}</span>
                   </p>
                 </div>
               </div>
               <div class="media-right">
-                {{conv.unreadCount}}
+                <span v-if="conv.unreadCount > 0" class="dot"></span>
               </div>
             </article>
           </a>
@@ -92,7 +94,7 @@ export default {
         }
       });
 
-      MClient.listConversations().then(async (result) => {
+      MClient.listConversations().then(async result => {
         if (result == null || result.success == false) {
           this.message = "Problem loading messenger messages";
         } else {
@@ -100,15 +102,23 @@ export default {
           for (let index = 0; index < result.convs.length; index++) {
             const element = result.convs[index];
 
+            
+
             var data = {
               ConvName: element.name,
               ConvID: element.threadID,
               last_message_text: element.snippet,
-              last_message_user: await MClient.getUserName(element.snippetSender),
+              last_message_user: await MClient.getUserName(
+                element.snippetSender
+              ),
               imageSrc: element.imageSrc,
               convType: "messenger",
               unreadCount: element.unreadCount
             };
+
+            if(element.imageSrc == null){
+             data.imageSrc = element.participants[0].profilePicture; 
+            }
 
             // update list
             this.convs.push(data);
@@ -158,5 +168,19 @@ export default {
   background-color: white;
   display: block;
   padding: 0.5em 1em;
+  font-family: Arial;
+  word-wrap: break-word;
+}
+.dot {
+  height: 14px;
+  width: 14px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.conv-image{
+height: 50px;
+width: 50px;
 }
 </style>
