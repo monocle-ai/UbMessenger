@@ -14,7 +14,7 @@
       <div class="box-container">
         <div
           class="box"
-          v-bind:class="{'has-background-primary to-right':sendByUser, 'has-background-info to-left':!sendByUser}"
+          v-bind:class="{'sentByUser to-right':sendByUser, 'sentByOther to-left':!sendByUser}"
         >
           <figure class="image" v-bind:class="{'is-hidden':isText}">
             <img
@@ -38,11 +38,11 @@
           </figure>
           <div
             class="data_message_text"
-            v-bind:class="{'is-hidden':!isText, 'has-text-right':sendByUser}"
+            v-bind:class="{'is-hidden':!isText, 'sentByUser':sendByUser}"
           >{{message.Content}}</div>
+           <MessageReaction class="mReaction" v-bind:class="{'to-right':sendByUser, 'to-left':!sendByUser}" v-if="message.messageReactions.length > 0" :reactions="message.messageReactions" />
         </div>
-
-        <div v-for="reaction in message.messageReactions" :key="reaction.userID">{{reaction}}</div>
+       
       </div>
     </div>
   </div>
@@ -50,6 +50,7 @@
 
 <script>
 import Client from "@/js/client.js";
+import MessageReaction from "./MessageReaction";
 
 export default {
   name: "MessageElement",
@@ -62,6 +63,7 @@ export default {
     };
   },
   props: ["message"],
+  components: { MessageReaction },
   created: async function() {
     if (this.message.Username == localStorage.username) {
       this.sendByUser = true;
@@ -99,9 +101,14 @@ export default {
 .message-container {
   padding: 0.1rem;
 }
+
 .box {
-  padding: 0.5rem;
+  border-radius: 20px;
+  padding: 0.5rem 1rem;
   width: auto;
+  max-width: 100%;
+  word-wrap: break-word;
+  max-width: 80%;
 }
 
 .box-container {
@@ -115,4 +122,23 @@ export default {
 .to-left {
   float: left;
 }
+
+.sentByOther{
+  background-color: #eee;
+}
+.sentByUser{
+  background-color: rgb(0, 153, 255);
+  color: white;
+}
+
+.mReaction{
+  position:absolute
+}
+.mReaction.to-right{
+  right: 2rem;
+}
+.mReaction.to-left{
+  left: 0;
+}
+
 </style>
