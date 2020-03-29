@@ -130,6 +130,7 @@ export default {
               UI_showUsername: true,
               UI_showDate: true,
               messenger: true,
+              attachments: element.attachments,
               SendDateFormated: element.timestamp,
               messageReactions: element.messageReactions,
               isUnread: element.isUnread

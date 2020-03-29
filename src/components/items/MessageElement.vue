@@ -16,13 +16,14 @@
           class="box"
           v-bind:class="{'sentByUser to-right':sendByUser, 'sentByOther to-left':!sendByUser}"
         >
+
+         <div v-for="image in pictures" :key="image.pos">
+              <img class="data_image" :src="image.url"/>
+            </div>
+
           <figure class="image" v-bind:class="{'is-hidden':isText}">
-            <img
-              class="data_image"
-              :src="imgSource"
-              v-bind:class="{'is-hidden':isLoading}"
-              style="height:150px; width:auto;"
-            />
+            
+           
 
             <font-awesome-icon
               :icon="['fas','image']"
@@ -40,9 +41,13 @@
             class="data_message_text"
             v-bind:class="{'is-hidden':!isText, 'sentByUser':sendByUser}"
           >{{message.Content}}</div>
-           <MessageReaction class="mReaction" v-bind:class="{'to-right':sendByUser, 'to-left':!sendByUser}" v-if="message.messageReactions.length > 0" :reactions="message.messageReactions" />
+          <MessageReaction
+            class="mReaction"
+            v-bind:class="{'to-right':sendByUser, 'to-left':!sendByUser}"
+            v-if="message.messageReactions.length > 0"
+            :reactions="message.messageReactions"
+          />
         </div>
-       
       </div>
     </div>
   </div>
@@ -59,7 +64,8 @@ export default {
       sendByUser: false,
       isLoading: true,
       isText: true,
-      imgSource: ""
+      imgSource: "",
+      pictures: []
     };
   },
   props: ["message"],
@@ -74,6 +80,19 @@ export default {
       this.message.senderID == localStorage.userid
     ) {
       this.sendByUser = true;
+    }
+    if(this.message.attachments !== undefined)
+    for (let index = 0; index < this.message.attachments.length; index++) {
+      const element = this.message.attachments[index];
+      if (element.type == "photo") {
+        var data = {
+          pos: index,
+          url: element.previewUrl,
+          width: element.previewWidth,
+          height: element.previewHeight
+        };
+        this.pictures.push(data);
+      }
     }
 
     if (this.message.DataType == "Text") {
@@ -109,6 +128,7 @@ export default {
   max-width: 100%;
   word-wrap: break-word;
   max-width: 80%;
+  font-family: Arial;
 }
 
 .box-container {
@@ -123,22 +143,27 @@ export default {
   float: left;
 }
 
-.sentByOther{
+.sentByOther {
   background-color: #eee;
 }
-.sentByUser{
+.sentByUser {
   background-color: rgb(0, 153, 255);
   color: white;
 }
 
-.mReaction{
-  position:absolute
+.mReaction {
+  position: absolute;
 }
-.mReaction.to-right{
+.mReaction.to-right {
   right: 2rem;
 }
-.mReaction.to-left{
+.mReaction.to-left {
   left: 0;
 }
 
+.data-image{
+  min-width: 40%;
+  min-height: 200px;
+  max-width: 100%;
+}
 </style>
