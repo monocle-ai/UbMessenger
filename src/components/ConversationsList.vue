@@ -26,7 +26,7 @@
                     <br />
                     <span
                       v-bind:class="{'has-text-weight-bold':conv.unreadCount > 0}"
-                    >@{{conv.last_message_user}} : {{conv.last_message_text}}</span>
+                    >{{conv.last_message_user}} : {{conv.last_message_text}}</span>
                   </p>
                 </div>
               </div>
@@ -35,9 +35,11 @@
               </div>
             </article>
           </a>
+          <infinite-loading @infinite="infiniteHandler"></infinite-loading>
         </div>
       </div>
     </section>
+    {{lastMessageTimestamp}} {{isLoading}}
     <section class="section">
       <p>{{message}}</p>App version :
       <strong>{{version}}</strong>
@@ -46,63 +48,51 @@
 </template>
 
 <script>
-import Client from "@/js/client.js";
 import MClient from "@/js/messengerClient";
 import NavBar from "@/components/items/NavBar.vue";
+import InfiniteLoading from "vue-infinite-loading";
 
 //import MessengerClient from "@/js/messenger.js";
 
 export default {
   name: "ConversationsList",
-  components: { NavBar },
+  components: { NavBar, InfiniteLoading },
 
   data() {
     return {
       selectedConv: null,
       convs: [],
       version: localStorage.version,
-      message: "Loading conversations..."
+      message: "Loading conversations...",
+      lastMessageTimestamp: null,
+      canLoad: true,
+      isLoading: false
     };
   },
+
   created: function() {
     var elem = localStorage.convsList;
     if (elem != null) {
       this.convs = JSON.parse(elem);
       this.message = "";
     }
-    this.loadConversationList();
+
+    //this.loadConversationList();
   },
+
   methods: {
-    loadConversationList() {
-      Client.loadConversationsList().then(result => {
-        if (
-          localStorage.token === undefined ||
-          localStorage.url === undefined
-        ) {
-          // cannot access the server properly
-          console.log("Sent back to login");
-
-          this.$router.push({ name: "Login" });
-        }
-
-        if (result == null || result.success == false) {
-          this.message = "Problem loading messages";
-        } else {
-          this.convs = result.convs;
-          //console.log(this.convs);
-          this.message = "";
-        }
-      });
-
-      MClient.listConversations().then(async result => {
+    async loadConversationList() {
+      return await MClient.listConversations(
+        5,
+        this.lastMessageTimestamp,
+        []
+      ).then(async result => {
         if (result == null || result.success == false) {
           this.message = "Problem loading messenger messages";
         } else {
           // adapt data in order to be displayed
           for (let index = 0; index < result.convs.length; index++) {
             const element = result.convs[index];
-
-            
 
             var data = {
               ConvName: element.name,
@@ -112,47 +102,52 @@ export default {
                 element.snippetSender
               ),
               imageSrc: element.imageSrc,
-              convType: "messenger",
               unreadCount: element.unreadCount
             };
 
-            if(element.imageSrc == null){
-             data.imageSrc = element.participants[0].profilePicture; 
+            if (element.imageSrc == null) {
+              data.imageSrc = element.participants[0].profilePicture;
             }
 
             // update list
             this.convs.push(data);
+            this.lastMessageTimestamp = parseInt(element.timestamp);
           }
+
+          // check if there is other conversations to load
+          if (result.convs.length == 0) this.canLoad = false;
 
           //console.log(this.convs);
           this.message = "";
         }
+
+        // end loading
+        return true;
       });
     },
-    async addConversation() {
-      if (
-        await Client.addConversation("New conv", [
-          "henri2h",
-          "marin",
-          "quentin"
-        ])
-      ) {
-        this.loadConversationList();
-        console.log("Success");
-      }
-    },
+
     clickedPlace(conv) {
       localStorage.convID = conv.ConvID;
       localStorage.convName = conv.ConvName;
-      localStorage.convType = "cchat"; // default
-
-      // change conv type if messenger
-      if (conv.convType == "messenger") {
-        localStorage.convType = "messenger";
-      }
 
       //changePage();
       this.$router.push({ name: "ConvView", params: { ConvID: conv.ConvID } });
+    },
+
+    async infiniteHandler($state) {
+      if (this.canLoad) {
+        // load more conversations
+        console.log("going to load...");
+        var a = await this.loadConversationList();
+        if (a == false) {
+          console.log("error");
+        }
+
+        $state.loaded();
+      } else {
+        console.log("completed");
+        $state.complete();
+      }
     }
   }
 };
@@ -174,13 +169,13 @@ export default {
 .dot {
   height: 14px;
   width: 14px;
-  background-color: #bbb;
+  background-color: rgba(55, 1, 249, 0.71);
   border-radius: 50%;
   display: inline-block;
 }
 
-.conv-image{
-height: 50px;
-width: 50px;
+.conv-image {
+  height: 50px;
+  width: 50px;
 }
 </style>
