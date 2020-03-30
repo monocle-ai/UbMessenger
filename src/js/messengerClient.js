@@ -1,12 +1,15 @@
 let client = {
-    async listConversations() {
+    async listConversations(count, timestamp, tags) {
         return await fetch(localStorage.url + "listConversations", {
             "method": "POST",
             "headers": {
                 "content-type": "application/json"
             },
             "body": JSON.stringify({
-                "token": localStorage.token
+                "token": localStorage.token,
+                "count":count,
+                "timestamp":timestamp,
+                "tags":tags
             })
         })
             .then(response => {
@@ -31,7 +34,9 @@ let client = {
             },
             "body": JSON.stringify({
                 "token": localStorage.token,
-                "threadID": threadID
+                "threadID": threadID,
+                messageCount:50,
+                timestamp:"none"
             })
         })
             .then(response => {
@@ -43,6 +48,28 @@ let client = {
             })
             .catch(err => {
                 return { "success": false, "error":err };
+            });
+    },
+    async getCurrentUserID() {
+        return await fetch(localStorage.url + "getCurrentUserID", {
+            "method": "POST",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "body": JSON.stringify({
+                "token": localStorage.token,
+            })
+        })
+            .then(response => {
+                return response.json()
+            })
+            .then(response => {
+                //console.log(response);
+                return { "user": response, "success": true };
+            })
+            .catch(err => {
+                console.log(err);
+                return { "success": false };
             });
     },
     async getUserInfo(userID) {
