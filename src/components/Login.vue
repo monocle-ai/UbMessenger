@@ -13,7 +13,7 @@
 
     <div class="section">
       <h2 class="title">Login :</h2>
-      <form id="vue-username" @submit.prevent="login">
+      <form id="vue-username" @submit.prevent="login()">
         <strong>Server address :</strong>
         <div class="control has-icons-left">
           <input class="input" type="url" v-model="url" />
@@ -69,7 +69,7 @@ export default {
       localStorage.url = this.url;
       localStorage.token = this.token;
 
-      var result = await MClient.listConversations();
+      var result = await MClient.listConversations(10, null, []);
       var usernameResult = await MClient.getCurrentUserID();
       console.log(result.success);
 
