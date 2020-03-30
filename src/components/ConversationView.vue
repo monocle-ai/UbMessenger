@@ -6,10 +6,9 @@
       SecondActionName="ConvSetting"
       SecondActionPath="ConvSettings"
     />
-
     <section class="section">
       <infinite-loading @infinite="infiniteHandler" direction="top"></infinite-loading>
-      <div v-for="element in convElems" :key="element.MessageID">
+      <div v-for="element in convElems" :key="element.timestamp">
         <MessageView :message="element" />
       </div>
     </section>
@@ -86,7 +85,10 @@ export default {
       loadMaxPosition: -1,
       refreshingConvList: false,
       timer: 1,
-      usernamesList: {}
+      usernamesList: {},
+
+      timestamp: null,
+      canLoad: true
     };
   },
 
@@ -104,7 +106,8 @@ export default {
       this.$router.push({ name: "Login" });
     }
 
-    this.loadMessenger();
+    await this.loadMessenger();
+    this.ScrollToBottom();
   },
 
   methods: {
@@ -113,159 +116,55 @@ export default {
       this.loadConversationMethod(1);
     },
 
-    loadMessenger() {
-      MClient.getThreadHistory(this.ConvID).then(async result => {
-        // load document
-        if (result.success) {
-          // clean thread history
-          for (let index = 0; index < result.convs.length; index++) {
-            const element = result.convs[index];
-            
-            var date = moment(parseInt(element.timestamp));
+    async loadMessenger() {
+      await MClient.getThreadHistory(this.ConvID, 10, this.timestamp).then(
+        async result => {
+          // load document
+          if (result.success) {
+            if (result.convs.length > 0)
+              this.timestamp = result.convs[0].timestamp;
+            else this.canLoad = false;
 
-            var data = {
-              DataType: "text",
-              Content: element.body,
-              ConvID: this.ConvID,
-              Username: await MClient.getUserName(element.senderID),
-              senderID: element.senderID,
-              UI_showUsername: true,
-              UI_showDate: true,
-              messenger: true,
-              attachments: element.attachments,
-              SendDateFormated: date.fromNow(),
-              messageReactions: element.messageReactions,
-              isUnread: element.isUnread
-            };
+            // clean thread history
+            for (let index = result.convs.length - 1; index >= 0; index--) {
+              const element = result.convs[index];
 
-            this.convElems.push(data);
+              var date = moment(parseInt(element.timestamp));
+
+              var data = {
+                DataType: "text",
+                Content: element.body,
+                ConvID: this.ConvID,
+
+                Username: await MClient.getUserName(element.senderID),
+                senderID: element.senderID,
+
+                UI_showUsername: true,
+                UI_showDate: true,
+                messenger: true,
+                attachments: element.attachments,
+                SendDateFormated: date.fromNow(),
+                messageReactions: element.messageReactions,
+                isUnread: element.isUnread,
+                timestamp: parseInt(element.timestamp)
+              };
+              //console.log(data.senderID);
+
+              this.convElems.unshift(data);
+            }
           }
+          return true;
         }
-
-        this.ScrollToBottom();
-      });
+      );
     },
 
     moveToConvSettings() {
       this.$router.push({ name: "ConvSettings" });
     },
-    loadConversation() {
-      this.loadConversationMethod();
-    },
 
-    getFormatedConv() {
-      var localElem = localStorage.getItem("conv_" + this.ConvID);
-
-      if (localElem != null) {
-        var data = JSON.parse(localElem);
-
-        //var lastDate = "";
-        var user;
-        var date;
-        data.Messages.forEach(element => {
-          // date formating
-          var date_string = element.SendDate.replace(/ /g, "T");
-          date_string = date_string.replace(/\//g, "-"); // replace the slash by "-"
-
-          var d = new Date(element.SendDate);
-
-          element.UI_showDate = true; // by default
-
-          if (date != null) {
-            var e = d - date;
-            if (e < 1000 * 60 * 10) {
-              // superior to 10 mins
-              element.UI_showDate = false;
-            } else {
-              // we need to show the date : formating it...
-              element.SendDateFormated = moment(date_string).fromNow();
-            }
-          } else {
-            // first element initialisation
-            element.UI_showDate = true;
-
-            // display date :
-            element.SendDateFormated = moment(date_string).fromNow();
-          }
-
-          // set date
-          date = d;
-
-          // display name ?
-
-          element.UI_showUsername = true;
-          if (element.Username == user) {
-            element.UI_showUsername = false;
-          }
-          if (element.Username == localStorage.username)
-            element.UI_showUsername = false;
-          user = element.Username;
-        });
-        return data;
-      }
-      return null;
-    },
-
-    loadConversationMethod(toMove = 0) {
-      var data = this.getFormatedConv();
-      if (data != null) {
-        // initialisation
-        var amin = null;
-        var amax = null;
-
-        if (this.loadMinPosition == -1) {
-          // initial loading
-          console.log("Initial loading...");
-          this.loadMaxPosition = data.Messages.length - 1;
-          var initialLoad = 10;
-
-          if (data.Messages.length > initialLoad) {
-            this.loadMinPosition = data.Messages.length - initialLoad;
-          } else {
-            this.loadMinPosition = 0;
-          }
-
-          //this.ScrollToBottom();
-          this.convElems = data.Messages.slice(this.loadMinPosition);
-        } else {
-          // we should load some old messages
-          if (toMove < 0) {
-            if (this.loadMinPosition + toMove >= 0) {
-              amin = this.loadMinPosition + toMove;
-              amax = this.loadMinPosition;
-              this.loadMinPosition = this.loadMinPosition + toMove;
-            }
-            // load old elements
-            // load elements to the top
-            for (let index = amax - 1; index >= amin; index--) {
-              this.convElems.unshift(data.Messages[index]);
-            }
-          } else if (toMove > 0) {
-            console.log("To move, more");
-            for (
-              let index = this.loadMaxPosition + 1;
-              index < data.Messages.length;
-              index++
-            ) {
-              console.log("More : ", index);
-              this.convElems.push(data.Messages[index]);
-            }
-            this.loadMaxPosition = data.Messages.length - 1;
-          }
-        }
-      } else {
-        console.log("Element is null");
-      }
-    },
-
-    infiniteHandler($state) {
-      if (this.loadMinPosition > 0) {
-        // load a number of elements
-        var a = -3; // should load a elements
-        if (this.loadMinPosition + a < 0) {
-          a = -this.loadMinPosition;
-        }
-        this.loadConversationMethod(a);
+    async infiniteHandler($state) {
+      if (this.canLoad) {
+        await this.loadMessenger();
         $state.loaded();
       } else {
         $state.complete();

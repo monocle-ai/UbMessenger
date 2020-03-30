@@ -26,7 +26,7 @@ let client = {
                 return { "success": false, error:err };
             });
     },
-    async getThreadHistory(threadID) {
+    async getThreadHistory(threadID, count, timestamp) {
         return await fetch(localStorage.url + "getThreadHistory", {
             "method": "POST",
             "headers": {
@@ -35,8 +35,8 @@ let client = {
             "body": JSON.stringify({
                 "token": localStorage.token,
                 "threadID": threadID,
-                messageCount:50,
-                timestamp:"none"
+                messageCount:count,
+                timestamp:timestamp
             })
         })
             .then(response => {

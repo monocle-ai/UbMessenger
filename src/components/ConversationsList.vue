@@ -39,7 +39,6 @@
         </div>
       </div>
     </section>
-    {{lastMessageTimestamp}} {{isLoading}}
     <section class="section">
       <p>{{message}}</p>App version :
       <strong>{{version}}</strong>
@@ -71,6 +70,10 @@ export default {
   },
 
   created: function() {
+    if (localStorage.url === undefined || localStorage.token === undefined) {
+      this.$router.push("Login");
+    }
+
     var elem = localStorage.convsList;
     if (elem != null) {
       this.convs = JSON.parse(elem);
@@ -82,48 +85,49 @@ export default {
 
   methods: {
     async loadConversationList() {
-      return await MClient.listConversations(
+      var result = await MClient.listConversations(
         5,
         this.lastMessageTimestamp,
         []
       ).then(async result => {
-        if (result == null || result.success == false) {
-          this.message = "Problem loading messenger messages";
-        } else {
-          // adapt data in order to be displayed
-          for (let index = 0; index < result.convs.length; index++) {
-            const element = result.convs[index];
+        // end loading
+        return result;
+      });
 
-            var data = {
-              ConvName: element.name,
-              ConvID: element.threadID,
-              last_message_text: element.snippet,
-              last_message_user: await MClient.getUserName(
-                element.snippetSender
-              ),
-              imageSrc: element.imageSrc,
-              unreadCount: element.unreadCount
-            };
+      if (result == null || result.success == false) {
+        this.message = "Problem loading messenger messages";
+        return false;
+      } else {
+        // adapt data in order to be displayed
 
-            if (element.imageSrc == null) {
-              data.imageSrc = element.participants[0].profilePicture;
-            }
+        //console.log(this.convs);
+        this.message = "";
+      }
 
-            // update list
-            this.convs.push(data);
-            this.lastMessageTimestamp = parseInt(element.timestamp);
-          }
+      for (let index = 0; index < result.convs.length; index++) {
+        const element = result.convs[index];
 
-          // check if there is other conversations to load
-          if (result.convs.length == 0) this.canLoad = false;
+        var data = {
+          ConvName: element.name,
+          ConvID: element.threadID,
+          last_message_text: element.snippet,
+          last_message_user: await MClient.getUserName(element.snippetSender),
+          imageSrc: element.imageSrc,
+          unreadCount: element.unreadCount
+        };
 
-          //console.log(this.convs);
-          this.message = "";
+        if (element.imageSrc == null) {
+          data.imageSrc = element.participants[0].profilePicture;
         }
 
-        // end loading
-        return true;
-      });
+        // update list
+        this.convs.push(data);
+        this.lastMessageTimestamp = parseInt(element.timestamp);
+      }
+
+      // check if there is other conversations to load
+      if (result.convs.length == 0) this.canLoad = false;
+      return true; // indicate success
     },
 
     clickedPlace(conv) {

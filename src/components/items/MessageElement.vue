@@ -16,15 +16,11 @@
           class="box"
           v-bind:class="{'sentByUser to-right':sendByUser, 'sentByOther to-left':!sendByUser}"
         >
-
-         <div v-for="image in pictures" :key="image.pos">
-              <img class="data_image" :src="image.url"/>
-            </div>
+          <div v-for="image in pictures" :key="image.pos">
+            <img class="data_image" :src="image.url" />
+          </div>
 
           <figure class="image" v-bind:class="{'is-hidden':isText}">
-            
-           
-
             <font-awesome-icon
               :icon="['fas','image']"
               v-bind:class="{'is-hidden':!isLoading}"
@@ -54,7 +50,6 @@
 </template>
 
 <script>
-import Client from "@/js/client.js";
 import MessageReaction from "./MessageReaction";
 
 export default {
@@ -70,49 +65,26 @@ export default {
   },
   props: ["message"],
   components: { MessageReaction },
-  created: async function() {
-    if (this.message.Username == localStorage.username) {
+  created: function() {
+    if (this.message.senderID == localStorage.userid) {
       this.sendByUser = true;
     }
 
-    if (
-      this.message.messenger &&
-      this.message.senderID == localStorage.userid
-    ) {
-      this.sendByUser = true;
-    }
-    if(this.message.attachments !== undefined)
-    for (let index = 0; index < this.message.attachments.length; index++) {
-      const element = this.message.attachments[index];
-      if (element.type == "photo") {
-        var data = {
-          pos: index,
-          url: element.previewUrl,
-          width: element.previewWidth,
-          height: element.previewHeight
-        };
-        this.pictures.push(data);
-      }
-    }
-
-    if (this.message.DataType == "Text") {
-      this.isLoading = false;
-    } else if (this.message.DataType == "Image") {
-      this.isText = false;
-
-      var imgSource = "";
-
-      await Client.GetPicture(this.message.ConvID, this.message.Content).then(
-        function(myBlob) {
-          //console.log(myBlob);
-          var objectURL = URL.createObjectURL(myBlob);
-          imgSource = objectURL;
+    if (this.message.attachments !== undefined)
+      for (let index = 0; index < this.message.attachments.length; index++) {
+        const element = this.message.attachments[index];
+        if (element.type == "photo") {
+          var data = {
+            pos: index,
+            url: element.previewUrl,
+            width: element.previewWidth,
+            height: element.previewHeight
+          };
+          this.pictures.push(data);
         }
-      );
+      }
 
-      this.imgSource = imgSource;
-      this.isLoading = false;
-    }
+    this.isLoading = false;
   }
 };
 </script>
@@ -161,7 +133,7 @@ export default {
   left: 0;
 }
 
-.data-image{
+.data-image {
   min-width: 40%;
   min-height: 200px;
   max-width: 100%;
