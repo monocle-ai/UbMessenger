@@ -70,10 +70,12 @@ export default {
       localStorage.token = this.token;
 
       var result = await MClient.listConversations();
+      var usernameResult = await MClient.getCurrentUserID();
       console.log(result.success);
 
       // TODO : check if token and url are valid
-      if (result.success) {
+      if (result.success && usernameResult.success) {
+        localStorage.userid = usernameResult.user;
         this.changePage();
       } else {
         // not valid...
