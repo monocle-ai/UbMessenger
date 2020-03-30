@@ -120,6 +120,8 @@ export default {
           // clean thread history
           for (let index = 0; index < result.convs.length; index++) {
             const element = result.convs[index];
+            
+            var date = moment(parseInt(element.timestamp));
 
             var data = {
               DataType: "text",
@@ -131,7 +133,7 @@ export default {
               UI_showDate: true,
               messenger: true,
               attachments: element.attachments,
-              SendDateFormated: element.timestamp,
+              SendDateFormated: date.fromNow(),
               messageReactions: element.messageReactions,
               isUnread: element.isUnread
             };
