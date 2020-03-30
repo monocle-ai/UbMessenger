@@ -73,13 +73,6 @@ export default {
     if (localStorage.url === undefined || localStorage.token === undefined) {
       this.$router.push("Login");
     }
-
-    var elem = localStorage.convsList;
-    if (elem != null) {
-      this.convs = JSON.parse(elem);
-      this.message = "";
-    }
-
     //this.loadConversationList();
   },
 
