@@ -60,6 +60,7 @@ clickable
 ```
 # Cross platform : Cordova : (copied from the cordova plugin readme)
 This project support cross platform build using cordova.
+Not the primary focus but, hey, we can do it !
 
 ## Usage
 Prepare
@@ -101,8 +102,3 @@ $ npm run cordova-build-only-www-browser # Build only files to src-cordova
 * If you are upgrading from an older release, please add `<hook type="after_prepare" src="../node_modules/vue-cli-plugin-cordova/serve-config-hook.js" />` to your config.xml
 
 * The devserver will run under https from now on, so make sure your rest & api endpoints are available under https, and have a correct CORS setup)
-
-# Current hack to enable push notifications and code-push
-
-[here for ionic](https://github.com/Microsoft/react-native-code-push/issues/1448#issuecomment-487270749)
-[here for cordova](https://github.com/microsoft/cordova-plugin-code-push/issues/600#issuecomment-590314216)
