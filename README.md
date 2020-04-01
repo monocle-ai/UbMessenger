@@ -6,15 +6,19 @@ WARNING : this project use a [custom bridge](https://github.com/Henri2h/UbTouch
 
 # Working :
 
-* [x] Display threads list
-* [x] Display thread history
-* [ ] Display images
-* [ ] Display reaction
+* [x] Display convertations list
+* [x] Display converation content
+* [x] Display images
+* [x] Display reaction
+* [ ] Set reactions
 * [ ] Send read indication
 * [ ] Send typing indication
 * [x] Send text messages
+* [ ] Reply to message
 * [ ] Send pictures messages
 * [ ] Push notification : work in progress, partially implemented
+* [ ] Add/remove user to/from a conversation
+* [ ] Set conversation title
 
 
 ## Project setup
