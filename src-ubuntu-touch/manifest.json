@@ -9,7 +9,7 @@
             "desktop":  "ubmessenger.desktop"
         }
     },
-    "version": "1.0.4",
+    "version": "1.0.5",
     "maintainer": "Henri <henri2h.carnot@gmail.com>",
     "framework" : "ubuntu-sdk-16.04"
 }

@@ -18,7 +18,7 @@ Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.config.productionTip = true
 
 // set version :
-localStorage.version = "beta_1.0.4";
+localStorage.version = "beta_1.0.5";
 window.canUseCordova = false;
 
 // add device ready event
