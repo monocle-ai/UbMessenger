@@ -41,9 +41,6 @@
                 </p>
               </div>
             </div>
-            <div class="media-right">
-              <span v-if="conv.unreadCount > 0" class="dot"></span>
-            </div>
           </article>
         </a>
 
@@ -70,9 +67,6 @@
                 </p>
               </div>
             </div>
-            <div class="media-right">
-              <span v-if="conv.unreadCount > 0" class="dot"></span>
-            </div>
           </article>
         </a>
 
@@ -82,9 +76,9 @@
           href="#"
           @click="clickedPlace(conv)"
           :key="conv.ConvID"
-          v-for="conv in searchConvs_groups"
+          v-for="conv in searchConvs_pages"
         >
-          <article class="media" v-if="conv.accountType == 'Pages'">
+          <article class="media">
             <figure class="media-left">
               <p class="image conv-image">
                 <img class="is-rounded" :src="conv.imageSrc" />
@@ -98,9 +92,6 @@
                   <br />
                 </p>
               </div>
-            </div>
-            <div class="media-right">
-              <span v-if="conv.unreadCount > 0" class="dot"></span>
             </div>
           </article>
         </a>
@@ -269,7 +260,7 @@ export default {
     },
 
     async searchConversation() {
-      await MClient.searchForThread(this.searchText, 10, 8, 5)
+      await MClient.searchForThread(this.searchText, 6, 4, 4)
         .then(async result => {
           this.convs = [];
 
@@ -293,10 +284,11 @@ export default {
             if (element.accountType == "User") {
               this.searchConvs_users.push(data);
             } else if (element.accountType == "MessengerViewerGroupThread") {
-              data.profilePicture = element.image;
+              data.imageSrc = element.image;
               this.searchConvs_groups.push(data);
             } else if (element.accountType == "Page") {
-              this.searchConvs_pages.push(data);
+              console.log(data); 
+                           this.searchConvs_pages.push(data);
             }
           }
         })

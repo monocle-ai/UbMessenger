@@ -26,7 +26,7 @@ let client = {
                 return { "success": false, error:err };
             });
     },
-    async searchForThread(name, num_pages, num_users, num_groups) {
+    async searchForThread(name,  num_users, num_groups, num_pages) {
         return await fetch(localStorage.url + "searchForThread", {
             "method": "POST",
             "headers": {
