@@ -7,7 +7,7 @@
           class="input"
           type="text"
           v-model="searchText"
-          v-on:input="searchConversation()"
+          v-on:input="loadData()"
           placeholder="Search a converation name"
         />
         <span class="icon is-small is-right has-text-dark">
@@ -15,7 +15,6 @@
         </span>
       </div>
     </form>
-
 
     <section class="section" v-if="searchText !=''">
       <div class="conv-list">
@@ -108,7 +107,7 @@
       </div>
     </section>
 
-    <section >
+    <section>
       <div class="conv-list">
         <a
           class="conv-item"
@@ -180,7 +179,8 @@ export default {
       version: localStorage.version,
       message: "Loading conversations...",
       lastMessageTimestamp: null,
-      isLoading: false
+
+      mutex: false
     };
   },
 
@@ -188,17 +188,26 @@ export default {
     if (localStorage.url === undefined || localStorage.token === undefined) {
       this.$router.push("Login");
     }
-    //this.loadConversationList();
   },
 
   methods: {
-    async loadConversationList() {
-      if(this.isLoading == false){
-        this.isLoading = true;
+    async loadData() {
+      if (this.mutex == false) {
+        this.mutex = true;
+
+        if (this.searchText == "") {
+          await this.loadConversationList();
+        } else {
+          await this.searchConversation();
+        }
+
+        this.mutex = false;
+        return true;
       }
-      else return;
+      return false;
+    },
 
-
+    async loadConversationList() {
       var result = await MClient.listConversations(
         5,
         this.lastMessageTimestamp,
@@ -209,9 +218,12 @@ export default {
       });
 
       // we scroll
+
+      // initialisation
       this.searchConvs_users = [];
       this.searchConvs_groups = [];
       this.searchConvs_pages = [];
+      if (this.convs.length == 0) this.lastMessageTimestamp = null;
 
       if (result == null || result.success == false) {
         this.message = "Problem loading messenger messages";
@@ -256,54 +268,54 @@ export default {
       this.$router.push({ name: "ConvView", params: { ConvID: conv.ConvID } });
     },
 
-
     async searchConversation() {
-      if (this.searchText != "")
-        await MClient.searchForThread(this.searchText, 10, 8, 5)
-          .then(async result => {
-            this.convs = [];
+      await MClient.searchForThread(this.searchText, 10, 8, 5)
+        .then(async result => {
+          this.convs = [];
 
-            this.searchConvs_users = [];
-            this.searchConvs_groups = [];
-            this.searchConvs_pages = [];
+          this.searchConvs_users = [];
+          this.searchConvs_groups = [];
+          this.searchConvs_pages = [];
 
-            console.log(result);
-            for (let index = 0; index < result.convs.length; index++) {
-              const element = result.convs[index];
+          console.log(result);
+          for (let index = 0; index < result.convs.length; index++) {
+            const element = result.convs[index];
 
-              var data = {
-                ConvName: element.name,
-                ConvID: element.userID,
-                imageSrc: element.profilePicture,
-                unReadCount: element.unreadCount
-              };
-              
-              console.log(element.accountType);
+            var data = {
+              ConvName: element.name,
+              ConvID: element.userID,
+              imageSrc: element.profilePicture,
+              unReadCount: element.unreadCount
+            };
 
-              if (element.accountType == "User")
-                this.searchConvs_users.push(data);
-              else if (element.accountType == "MessengerViewerGroupThread")
-                this.searchConvs_groups.push(data);
-              else if (element.accountType == "Page")
-                this.searchConvs_pages.push(data);
+            console.log(element.accountType);
+
+            if (element.accountType == "User") {
+              this.searchConvs_users.push(data);
+            } else if (element.accountType == "MessengerViewerGroupThread") {
+              data.profilePicture = element.image;
+              this.searchConvs_groups.push(data);
+            } else if (element.accountType == "Page") {
+              this.searchConvs_pages.push(data);
             }
-          })
-          .catch(err => {
-            console.error(err);
-          });
-      else {
-        console.log("Going to load");
-        await this.loadConversationList();
-      }
+          }
+        })
+        .catch(err => {
+          console.error(err);
+        });
     },
 
     async infiniteHandler($state) {
       if (this.searchText == "") {
         // load more conversations
         console.log("going to load...");
-        var a = await this.loadConversationList();
+        var a = await this.loadData();
+
         if (a == false) {
           console.log("error");
+
+          $state.complete();
+          return;
         }
 
         $state.loaded();
