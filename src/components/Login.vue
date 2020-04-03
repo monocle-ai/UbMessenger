@@ -2,11 +2,11 @@
   <div>
     <NavBar PageName="Login" />
 
-    <section class="hero is-primary">
+    <section class="hero color-blue">
       <div class="hero-body">
         <div class="container">
-          <h1 class="title">Welcome in UbMessenger</h1>
-          <h2 class="subtitle">Please enter the server address and credential</h2>
+          <h1 class="title has-text-white">Welcome in UbMessenger</h1>
+          <h2 class="subtitle has-text-white">Please enter the server address and credential</h2>
         </div>
       </div>
     </section>
