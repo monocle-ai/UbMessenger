@@ -71,3 +71,11 @@ async function loadHome() {
     contentDiv.innerHTML = await fetchHtmlAsText("home.html");
 }*/
 </script>
+
+<style>
+.color-blue{
+
+ background-color:  rgb(0, 153, 255)
+
+}
+</style>
