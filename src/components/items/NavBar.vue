@@ -2,7 +2,11 @@
   <nav class="navbar is-fixed-top">
     <div class="navbar-brand">
       <a class="navbar-item" v-on:click="moveToMainAction()">{{PageName}}</a>
-      <div class="navbar-burger burger is-hidden" data-target="navMenu" v-bind:class="{'is-hidden': !SecondActionSet }">
+      <div
+        class="navbar-burger burger is-hidden"
+        data-target="navMenu"
+        v-bind:class="{'is-hidden': !SecondActionSet }"
+      >
         <span></span>
         <span></span>
         <span></span>
@@ -10,32 +14,11 @@
 
       <div class="navbar-end to-right" v-bind:class="{'is-hidden': !SecondActionSet }">
         <div class="navbar-item">
-          <div class="field is-grouped">
-            <p class="control">
-              <a class="button" v-on:click="moveToSecondAction()">
-                <span class="icon">
-                  <font-awesome-icon :icon="['fas','cog']" />
-                </span>
-              </a>
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="navbar-menu" id="navMenu">
-      <div class="navbar-end">
-        <div class="navbar-item">
-          <div class="field is-grouped">
-            <p class="control">
-              <a class="button" v-on:click="moveToSecondAction()">
-                <span class="icon">
-                  <font-awesome-icon :icon="['fas','cog']" />
-                </span>
-                <span>{{SecondActionName}}</span>
-              </a>
-            </p>
-          </div>
+          <a class="button" v-on:click="moveToSecondAction()">
+            <span class="icon">
+              <font-awesome-icon :icon="['fas','cog']" />
+            </span>
+          </a>
         </div>
       </div>
     </div>
@@ -51,8 +34,8 @@ export default {
     };
   },
 
-  mounted: function(){
-    if(this.SecondActionName != null){
+  mounted: function() {
+    if (this.SecondActionName != null) {
       this.SecondActionSet = true;
     }
   },
@@ -60,7 +43,7 @@ export default {
   props: ["PageName", "MainActionPath", "SecondActionName", "SecondActionPath"],
   methods: {
     moveToSecondAction() {
-      this.$router.push( this.SecondActionPath );
+      this.$router.push(this.SecondActionPath);
       //closeNavBar();
     },
     moveToMainAction() {
@@ -71,9 +54,9 @@ export default {
 </script>
 
 <style scoped>
-.to-right{
-display: block;
-position: relative;
-margin-left: auto;
+.to-right {
+  display: block;
+  position: absolute;
+  right: 0px;
 }
 </style>
