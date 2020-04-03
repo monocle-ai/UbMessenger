@@ -88,7 +88,8 @@ export default {
       usernamesList: {},
 
       timestamp: null,
-      canLoad: true
+      canLoad: true,
+      mutex: false
     };
   },
 
@@ -106,7 +107,6 @@ export default {
       this.$router.push({ name: "Login" });
     }
 
-    await this.loadMessenger();
     this.ScrollToBottom();
   },
 
@@ -117,45 +117,49 @@ export default {
     },
 
     async loadMessenger() {
-      await MClient.getThreadHistory(this.ConvID, 10, this.timestamp).then(
-        async result => {
-          // load document
-          if (result.success) {
-            if (result.convs.length > 0)
-              this.timestamp = result.convs[0].timestamp;
-            else this.canLoad = false;
+      if (this.mutex == false) {
+        this.mutex = true;
+        await MClient.getThreadHistory(this.ConvID, 10, this.timestamp).then(
+          async result => {
+            // load document
+            if (result.success) {
+              if (result.convs.length > 0)
+                this.timestamp = result.convs[0].timestamp;
+              else this.canLoad = false;
 
-            // clean thread history
-            for (let index = result.convs.length - 1; index >= 0; index--) {
-              const element = result.convs[index];
+              // clean thread history
+              for (let index = result.convs.length - 1; index >= 0; index--) {
+                const element = result.convs[index];
 
-              var date = moment(parseInt(element.timestamp));
+                var date = moment(parseInt(element.timestamp));
 
-              var data = {
-                DataType: "text",
-                Content: element.body,
-                ConvID: this.ConvID,
+                var data = {
+                  DataType: "text",
+                  Content: element.body,
+                  ConvID: this.ConvID,
 
-                Username: await MClient.getUserName(element.senderID),
-                senderID: element.senderID,
+                  Username: await MClient.getUserName(element.senderID),
+                  senderID: element.senderID,
 
-                UI_showUsername: true,
-                UI_showDate: true,
-                messenger: true,
-                attachments: element.attachments,
-                SendDateFormated: date.fromNow(),
-                messageReactions: element.messageReactions,
-                isUnread: element.isUnread,
-                timestamp: parseInt(element.timestamp)
-              };
-              //console.log(data.senderID);
+                  UI_showUsername: true,
+                  UI_showDate: true,
+                  messenger: true,
+                  attachments: element.attachments,
+                  SendDateFormated: date.fromNow(),
+                  messageReactions: element.messageReactions,
+                  isUnread: element.isUnread,
+                  timestamp: parseInt(element.timestamp)
+                };
+                //console.log(data.senderID);
 
-              this.convElems.unshift(data);
+                this.convElems.unshift(data);
+              }
             }
+            return true;
           }
-          return true;
-        }
-      );
+        );
+        this.mutex = false;
+      }
     },
 
     moveToConvSettings() {
