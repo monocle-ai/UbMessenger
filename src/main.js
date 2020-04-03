@@ -6,12 +6,12 @@ import router from './router'
 import './../node_modules/bulma/css/bulma.css'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faUser, faLock, faCog, faImage, faCheck, faCommentAlt } from '@fortawesome/free-solid-svg-icons'
+import { faUser, faLock, faCog, faImage, faCheck, faCommentAlt, faSearch } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 //import Client from '@/js/client.js'
 
-library.add(faUser, faLock, faCog, faImage, faCheck, faCommentAlt)
+library.add(faUser, faLock, faCog, faImage, faCheck, faCommentAlt, faSearch)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 

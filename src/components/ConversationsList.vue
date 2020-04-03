@@ -1,44 +1,154 @@
 <template>
   <div>
     <NavBar PageName="UbMessenger" SecondActionName="Settings" SecondActionPath="Settings" />
+    <form class="container">
+      <div class="control has-icons-right">
+        <input
+          class="input"
+          type="text"
+          v-model="searchText"
+          v-on:input="searchConversation()"
+          placeholder="Search a converation name"
+        />
+        <span class="icon is-small is-right has-text-dark">
+          <font-awesome-icon :icon="['fas','search']" />
+        </span>
+      </div>
+    </form>
 
-    <section>
-      <div id="app">
-        <div class="conv-list">
-          <a
-            class="conv-item"
-            href="#"
-            @click="clickedPlace(conv)"
-            :key="conv.ConvID"
-            v-for="conv in convs"
-          >
-            <article class="media">
-              <figure class="media-left">
-                <p class="image conv-image">
-                  <img class="is-rounded" :src="conv.imageSrc" />
+
+    <section class="section" v-if="searchText !=''">
+      <div class="conv-list">
+        <h2 class="subtitle">Users</h2>
+        <a
+          class="conv-item"
+          href="#"
+          @click="clickedPlace(conv)"
+          :key="conv.ConvID"
+          v-for="conv in searchConvs_users"
+        >
+          <article class="media">
+            <figure class="media-left">
+              <p class="image conv-image">
+                <img class="is-rounded" :src="conv.imageSrc" />
+              </p>
+            </figure>
+            <div class="media-content">
+              <div class="content has-text-black">
+                <p>
+                  <strong class="is-size-5">{{conv.ConvName}}</strong>
+                  <small>{{conv.last_message_date}}</small>
+                  <br />
                 </p>
-              </figure>
-              <div class="media-content">
-                <div class="content has-text-black">
-                  <p>
-                    <strong class="is-size-5">{{conv.ConvName}}</strong>
-                    <small>{{conv.last_message_date}}</small>
-                    <br />
-                    <span
-                      v-bind:class="{'has-text-weight-bold':conv.unreadCount > 0}"
-                    >{{conv.last_message_user}} : {{conv.last_message_text}}</span>
-                  </p>
-                </div>
               </div>
-              <div class="media-right">
-                <span v-if="conv.unreadCount > 0" class="dot"></span>
+            </div>
+            <div class="media-right">
+              <span v-if="conv.unreadCount > 0" class="dot"></span>
+            </div>
+          </article>
+        </a>
+
+        <h2 class="subtitle">Groups</h2>
+        <a
+          class="conv-item"
+          href="#"
+          @click="clickedPlace(conv)"
+          :key="conv.ConvID"
+          v-for="conv in searchConvs_groups"
+        >
+          <article class="media">
+            <figure class="media-left">
+              <p class="image conv-image">
+                <img class="is-rounded" :src="conv.imageSrc" />
+              </p>
+            </figure>
+            <div class="media-content">
+              <div class="content has-text-black">
+                <p>
+                  <strong class="is-size-5">{{conv.ConvName}}</strong>
+                  <small>{{conv.last_message_date}}</small>
+                  <br />
+                </p>
               </div>
-            </article>
-          </a>
-          <infinite-loading @infinite="infiniteHandler"></infinite-loading>
-        </div>
+            </div>
+            <div class="media-right">
+              <span v-if="conv.unreadCount > 0" class="dot"></span>
+            </div>
+          </article>
+        </a>
+
+        <h2 class="subtitle">Pages</h2>
+        <a
+          class="conv-item"
+          href="#"
+          @click="clickedPlace(conv)"
+          :key="conv.ConvID"
+          v-for="conv in searchConvs_groups"
+        >
+          <article class="media" v-if="conv.accountType == 'Pages'">
+            <figure class="media-left">
+              <p class="image conv-image">
+                <img class="is-rounded" :src="conv.imageSrc" />
+              </p>
+            </figure>
+            <div class="media-content">
+              <div class="content has-text-black">
+                <p>
+                  <strong class="is-size-5">{{conv.ConvName}}</strong>
+                  <small>{{conv.last_message_date}}</small>
+                  <br />
+                </p>
+              </div>
+            </div>
+            <div class="media-right">
+              <span v-if="conv.unreadCount > 0" class="dot"></span>
+            </div>
+          </article>
+        </a>
       </div>
     </section>
+
+    <section >
+      <div class="conv-list">
+        <a
+          class="conv-item"
+          href="#"
+          @click="clickedPlace(conv)"
+          :key="conv.ConvID"
+          v-for="conv in convs"
+        >
+          <article class="media">
+            <figure class="media-left">
+              <p class="image conv-image">
+                <img class="is-rounded" :src="conv.imageSrc" />
+              </p>
+            </figure>
+            <div class="media-content">
+              <div class="content has-text-black">
+                <p>
+                  <strong class="is-size-5">{{conv.ConvName}}</strong>
+                  <small>{{conv.last_message_date}}</small>
+                  <br />
+                  <span
+                    v-bind:class="{'has-text-weight-bold':conv.unReadCount > 0}"
+                  >{{conv.last_message_user}} : {{conv.last_message_text}}</span>
+                </p>
+              </div>
+            </div>
+            <div class="media-right">
+              <span v-if="conv.unreadCount > 0" class="dot"></span>
+            </div>
+          </article>
+        </a>
+
+        <infinite-loading @infinite="infiniteHandler">
+          <div slot="spinner">Loading...</div>
+          <div slot="no-more">No more message</div>
+          <div slot="no-results">No results message</div>
+        </infinite-loading>
+      </div>
+    </section>
+
     <section class="section">
       <p>{{message}}</p>App version :
       <strong>{{version}}</strong>
@@ -61,10 +171,15 @@ export default {
     return {
       selectedConv: null,
       convs: [],
+
+      searchConvs_groups: [],
+      searchConvs_users: [],
+      searchConvs_pages: [],
+
+      searchText: "",
       version: localStorage.version,
       message: "Loading conversations...",
       lastMessageTimestamp: null,
-      canLoad: true,
       isLoading: false
     };
   },
@@ -78,6 +193,12 @@ export default {
 
   methods: {
     async loadConversationList() {
+      if(this.isLoading == false){
+        this.isLoading = true;
+      }
+      else return;
+
+
       var result = await MClient.listConversations(
         5,
         this.lastMessageTimestamp,
@@ -86,6 +207,11 @@ export default {
         // end loading
         return result;
       });
+
+      // we scroll
+      this.searchConvs_users = [];
+      this.searchConvs_groups = [];
+      this.searchConvs_pages = [];
 
       if (result == null || result.success == false) {
         this.message = "Problem loading messenger messages";
@@ -116,10 +242,9 @@ export default {
         // update list
         this.convs.push(data);
         this.lastMessageTimestamp = parseInt(element.timestamp);
+        this.isLoading = false;
       }
 
-      // check if there is other conversations to load
-      if (result.convs.length == 0) this.canLoad = false;
       return true; // indicate success
     },
 
@@ -131,8 +256,49 @@ export default {
       this.$router.push({ name: "ConvView", params: { ConvID: conv.ConvID } });
     },
 
+
+    async searchConversation() {
+      if (this.searchText != "")
+        await MClient.searchForThread(this.searchText, 10, 8, 5)
+          .then(async result => {
+            this.convs = [];
+
+            this.searchConvs_users = [];
+            this.searchConvs_groups = [];
+            this.searchConvs_pages = [];
+
+            console.log(result);
+            for (let index = 0; index < result.convs.length; index++) {
+              const element = result.convs[index];
+
+              var data = {
+                ConvName: element.name,
+                ConvID: element.userID,
+                imageSrc: element.profilePicture,
+                unReadCount: element.unreadCount
+              };
+              
+              console.log(element.accountType);
+
+              if (element.accountType == "User")
+                this.searchConvs_users.push(data);
+              else if (element.accountType == "MessengerViewerGroupThread")
+                this.searchConvs_groups.push(data);
+              else if (element.accountType == "Page")
+                this.searchConvs_pages.push(data);
+            }
+          })
+          .catch(err => {
+            console.error(err);
+          });
+      else {
+        console.log("Going to load");
+        await this.loadConversationList();
+      }
+    },
+
     async infiniteHandler($state) {
-      if (this.canLoad) {
+      if (this.searchText == "") {
         // load more conversations
         console.log("going to load...");
         var a = await this.loadConversationList();

@@ -26,14 +26,15 @@ let client = {
                 return { "success": false, error:err };
             });
     },
-    async searchConversations(num_pages, num_users, num_groups) {
-        return await fetch(localStorage.url + "searchConversations", {
+    async searchForThread(name, num_pages, num_users, num_groups) {
+        return await fetch(localStorage.url + "searchForThread", {
             "method": "POST",
             "headers": {
                 "content-type": "application/json"
             },
             "body": JSON.stringify({
                 "token": localStorage.token,
+                "name":name,
                 "num_pages":num_pages,
                 "num_users":num_users,
                 "num_groups":num_groups
