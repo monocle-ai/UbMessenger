@@ -100,8 +100,6 @@ export default {
     this.ConvName = localStorage.convName;
     this.convType = localStorage.convType;
 
-    console.log(this.ConvName);
-
     // check if username is set
     if (localStorage.token === undefined || localStorage.url === undefined) {
       this.$router.push({ name: "Login" });
@@ -175,21 +173,25 @@ export default {
       }
     },
 
-    sendMessage() {
+    async sendMessage() {
       if (this.messageComposerText != "") {
-        //cchat
-        if (this.convType == "cchat") {
-          Client.sendMessage(this.ConvID, this.messageComposerText);
-          this.updateConv();
-        }
-        // messenger
-        else if (this.convType == "messenger") {
-          MClient.sendMessage(this.ConvID, this.messageComposerText);
-          this.loadMessenger();
-        }
+
+        
+        await MClient.sendMessage(this.ConvID, this.messageComposerText).then(
+          result => {
+            console.log(result);
+          }
+        );
 
         // empty the composer
         this.messageComposerText = "";
+
+
+        // we need to refresh the screen
+        this.convElems = []; // TODO: implement a better way to refresh the conversation list
+        this.timestamp = null;
+        //await this.loadMessenger(); // no need to refresh, the infinite loader take care of this...
+
         this.ScrollToBottom();
       }
     },
@@ -201,22 +203,6 @@ export default {
 
     addFiles() {
       this.$refs.img_files.click();
-    },
-
-    // update conv from server
-    updateConv() {
-      console.log("run : ", this.ConvID);
-      // then load data from the internet
-      Client.loadMessages(this.ConvID).then(result => {
-        // load document
-        if (result) {
-          this.loadNewMessages();
-
-          window.AppCenter.Analytics.trackEvent(
-            "Conversation updating, loading"
-          );
-        }
-      });
     },
 
     loadPicture(e) {
