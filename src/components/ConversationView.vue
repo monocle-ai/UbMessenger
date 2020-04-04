@@ -148,7 +148,14 @@ export default {
                   isUnread: element.isUnread,
                   timestamp: parseInt(element.timestamp)
                 };
-                //console.log(data.senderID);
+
+                // in case of type = event
+                if (element.type == "event") {
+                  console.log(element);
+                  data.Content = element.snippet;
+                  data.Username = "server";
+                  data.messageReactions = [];
+                }
 
                 this.convElems.unshift(data);
               }
@@ -175,8 +182,6 @@ export default {
 
     async sendMessage() {
       if (this.messageComposerText != "") {
-
-        
         await MClient.sendMessage(this.ConvID, this.messageComposerText).then(
           result => {
             console.log(result);
@@ -185,7 +190,6 @@ export default {
 
         // empty the composer
         this.messageComposerText = "";
-
 
         // we need to refresh the screen
         this.convElems = []; // TODO: implement a better way to refresh the conversation list
