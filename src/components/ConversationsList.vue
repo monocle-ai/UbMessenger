@@ -36,7 +36,6 @@
               <div class="content has-text-black">
                 <p>
                   <strong class="is-size-5">{{conv.ConvName}}</strong>
-                  <small>{{conv.last_message_date}}</small>
                   <br />
                 </p>
               </div>
@@ -62,7 +61,6 @@
               <div class="content has-text-black">
                 <p>
                   <strong class="is-size-5">{{conv.ConvName}}</strong>
-                  <small>{{conv.last_message_date}}</small>
                   <br />
                 </p>
               </div>
@@ -88,7 +86,6 @@
               <div class="content has-text-black">
                 <p>
                   <strong class="is-size-5">{{conv.ConvName}}</strong>
-                  <small>{{conv.last_message_date}}</small>
                   <br />
                 </p>
               </div>
@@ -117,11 +114,10 @@
               <div class="content has-text-black">
                 <p>
                   <strong class="is-size-5">{{conv.ConvName}}</strong>
-                  <small>{{conv.last_message_date}}</small>
                   <br />
                   <span
                     v-bind:class="{'has-text-weight-bold':conv.unReadCount > 0}"
-                  >{{conv.last_message_user}} : {{conv.last_message_text}}</span>
+                  >{{conv.last_message_user}} : {{conv.last_message_text}} - {{conv.last_message_date}}</span>
                 </p>
               </div>
             </div>
@@ -151,6 +147,7 @@ import MClient from "@/js/messengerClient";
 import NavBar from "@/components/items/NavBar.vue";
 import InfiniteLoading from "vue-infinite-loading";
 
+import moment from "moment";
 //import MessengerClient from "@/js/messenger.js";
 
 export default {
@@ -214,7 +211,9 @@ export default {
       this.searchConvs_users = [];
       this.searchConvs_groups = [];
       this.searchConvs_pages = [];
+
       if (this.convs.length == 0) this.lastMessageTimestamp = null;
+
 
       if (result == null || result.success == false) {
         this.message = "Problem loading messenger messages";
@@ -229,11 +228,14 @@ export default {
       for (let index = 0; index < result.convs.length; index++) {
         const element = result.convs[index];
 
+                var date = moment(parseInt(element.timestamp));
+
         var data = {
           ConvName: element.name,
           ConvID: element.threadID,
           last_message_text: element.snippet,
           last_message_user: await MClient.getUserName(element.snippetSender),
+          last_message_date: date.fromNow(),
           imageSrc: element.imageSrc,
           unreadCount: element.unreadCount
         };
