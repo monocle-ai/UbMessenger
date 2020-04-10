@@ -121,13 +121,15 @@ export default {
           async result => {
             // load document
             if (result.success) {
-              if (result.convs.length > 0)
-                this.timestamp = result.convs[0].timestamp;
+
+              var convs = result.data.messages;
+              if (convs.length > 0)
+                this.timestamp = convs[0].timestamp;
               else this.canLoad = false;
 
               // clean thread history
-              for (let index = result.convs.length - 1; index >= 0; index--) {
-                const element = result.convs[index];
+              for (let index = convs.length - 1; index >= 0; index--) {
+                const element = convs[index];
 
                 var date = moment(parseInt(element.timestamp));
 

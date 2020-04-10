@@ -214,7 +214,6 @@ export default {
 
       if (this.convs.length == 0) this.lastMessageTimestamp = null;
 
-
       if (result == null || result.success == false) {
         this.message = "Problem loading messenger messages";
         return false;
@@ -228,7 +227,7 @@ export default {
       for (let index = 0; index < result.convs.length; index++) {
         const element = result.convs[index];
 
-                var date = moment(parseInt(element.timestamp));
+        var date = moment(parseInt(element.timestamp));
 
         var data = {
           ConvName: element.name,
@@ -277,7 +276,7 @@ export default {
             var data = {
               ConvName: element.name,
               ConvID: element.userID,
-              imageSrc: element.profilePicture,
+              imageSrc: element.imageSrc,
               unReadCount: element.unreadCount
             };
 
@@ -286,11 +285,10 @@ export default {
             if (element.accountType == "User") {
               this.searchConvs_users.push(data);
             } else if (element.accountType == "MessengerViewerGroupThread") {
-              data.imageSrc = element.image;
               this.searchConvs_groups.push(data);
             } else if (element.accountType == "Page") {
-              console.log(data); 
-                           this.searchConvs_pages.push(data);
+              console.log(data);
+              this.searchConvs_pages.push(data);
             }
           }
         })
