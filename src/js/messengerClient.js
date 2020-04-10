@@ -72,7 +72,29 @@ let client = {
             })
             .then(response => {
                 //console.log(response);
-                return { "convs": response, "success": true };
+                return { "data": response, "success": true };
+            })
+            .catch(err => {
+                return { "success": false, "error":err };
+            });
+    },
+    async getThreadInfo(threadID) {
+        return await fetch(localStorage.url + "getThreadInfo", {
+            "method": "POST",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "body": JSON.stringify({
+                "token": localStorage.token,
+                "threadID": threadID
+            })
+        })
+            .then(response => {
+                return response.json()
+            })
+            .then(response => {
+                //console.log(response);
+                return { "convInfo": response, "success": true };
             })
             .catch(err => {
                 return { "success": false, "error":err };
