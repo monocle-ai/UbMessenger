@@ -7,7 +7,10 @@
       SecondActionPath="ConvSettings"
     />
     <section class="section">
-      <infinite-loading @infinite="infiniteHandler" direction="top"></infinite-loading>
+      <infinite-loading
+        @infinite="infiniteHandler"
+        direction="top"
+      ></infinite-loading>
       <div v-for="element in convElems" :key="element.timestamp">
         <MessageView :message="element" />
       </div>
@@ -18,7 +21,11 @@
 
     <br />
 
-    <nav class="navbar is-fixed-bottom" role="navigation" aria-label="main navigation">
+    <nav
+      class="navbar is-fixed-bottom"
+      role="navigation"
+      aria-label="main navigation"
+    >
       <div class="navbar-menu is-active">
         <div class="navbar-item is-expanded field has-addons">
           <div class="control">
@@ -30,23 +37,33 @@
               v-on:change="loadPicture"
               style="display:none;"
             />
-            <button class="button is-info has-text-white" v-on:click="addFiles()">
-              <font-awesome-icon :icon="['fas','image']" />
+            <button
+              class="button is-info has-text-white"
+              v-on:click="addFiles()"
+            >
+              <font-awesome-icon :icon="['fas', 'image']" />
             </button>
           </div>
           <form class="control is-expanded" @submit.prevent="sendMessage()">
             <p class="control has-icons-left has-icons-right">
-              <input class="input" type="text" v-model="messageComposerText" placeholder="Message" />
+              <input
+                class="input"
+                type="text"
+                v-model="messageComposerText"
+                placeholder="Message"
+              />
               <span class="icon is-small is-left">
-                <font-awesome-icon :icon="['fas','comment-alt']" />
+                <font-awesome-icon :icon="['fas', 'comment-alt']" />
               </span>
               <span class="icon is-small is-right">
-                <font-awesome-icon :icon="['fas','check']" />
+                <font-awesome-icon :icon="['fas', 'check']" />
               </span>
             </p>
           </form>
           <div class="control">
-            <button class="button is-info" v-on:click="sendMessage()">Send</button>
+            <button class="button is-info" v-on:click="sendMessage()">
+              Send
+            </button>
           </div>
         </div>
       </div>
@@ -121,10 +138,10 @@ export default {
           async result => {
             // load document
             if (result.success) {
-
               var convs = result.data.messages;
-              if (convs.length > 0)
-                this.timestamp = convs[0].timestamp;
+              var readReceipts = result.data.readReceipts;
+
+              if (convs.length > 0) this.timestamp = convs[0].timestamp;
               else this.canLoad = false;
 
               // clean thread history
@@ -148,8 +165,39 @@ export default {
                   SendDateFormated: date.fromNow(),
                   messageReactions: element.messageReactions,
                   isUnread: element.isUnread,
-                  timestamp: parseInt(element.timestamp)
+                  timestamp: parseInt(element.timestamp),
+                  readBy: []
                 };
+
+                // get read status
+                let read_index = 0;
+                while (read_index < readReceipts.length) {
+                  if (
+                    parseInt(element.timestamp) ==
+                    parseInt(readReceipts[read_index].watermark)
+                  ) {
+                    console.log(
+                      readReceipts[index].id,
+                      await MClient.getUserName(readReceipts[read_index].id)
+                    );
+
+                    var rData = {
+                      id: readReceipts[index].id,
+                      vueID: "readR_" + readReceipts[index].id,
+                      name: await MClient.getUserName(
+                        readReceipts[read_index].id
+                      ),
+                      watermark: readReceipts[read_index].watermark,
+                      action: readReceipts[read_index].action,
+                      date: moment(
+                        parseInt(readReceipts[read_index].action)
+                      ).fromNow()
+                    };
+                    data.readBy.push(rData);
+
+                    readReceipts.splice(read_index, 1); // remove current item
+                  } else read_index++;
+                }
 
                 // in case of type = event
                 if (element.type == "event") {
@@ -161,6 +209,8 @@ export default {
 
                 this.convElems.unshift(data);
               }
+
+              console.log(readReceipts);
             }
             return true;
           }

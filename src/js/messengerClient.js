@@ -180,11 +180,14 @@ let client = {
         if (list[userID] === undefined) {
             var udata = await this.getUserInfo(userID);
 
-            if (udata.success) {
+            if (udata.success && udata.user[userID] != null) {
                 list[userID] = udata.user[userID].name;
 
                 localStorage.usernamesList = JSON.stringify(list);
                 return list[userID];
+            }
+            else{
+                console.error("Invalid result");
             }
         }
         else {

@@ -43,6 +43,7 @@
             v-if="message.messageReactions.length > 0"
             :reactions="message.messageReactions"
           />
+          <MessageReadReceipts v-if="message.readBy.length > 0" :readReceipts="message.readBy"/>
         </div>
       </div>
     </div>
@@ -51,7 +52,7 @@
 
 <script>
 import MessageReaction from "./MessageReaction";
-
+import MessageReadReceipts from "./MessageReadReceipts"
 export default {
   name: "MessageElement",
   data() {
@@ -64,7 +65,7 @@ export default {
     };
   },
   props: ["message"],
-  components: { MessageReaction },
+  components: { MessageReaction, MessageReadReceipts },
   created: function() {
     if (this.message.senderID == localStorage.userid) {
       this.sendByUser = true;
