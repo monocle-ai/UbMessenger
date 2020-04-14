@@ -21,6 +21,15 @@ Vue.config.productionTip = true
 localStorage.version = "beta_1.0.6";
 window.canUseCordova = false;
 
+// add sentry
+import * as Sentry from '@sentry/browser';
+import * as Integrations from '@sentry/integrations';
+
+Sentry.init({
+  dsn: 'https://ddb005b4671e4d48a842a640c1bf9511@o365101.ingest.sentry.io/5199799',
+  integrations: [new Integrations.Vue({Vue, attachProps: true, logErrors:true})],
+});
+
 // add device ready event
 document.addEventListener("deviceready", onDeviceReady, false);
 

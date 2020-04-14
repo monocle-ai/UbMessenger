@@ -171,19 +171,21 @@ export default {
 
                 // get read status
                 let read_index = 0;
+
                 while (read_index < readReceipts.length) {
-                  if (
+
+                 if (
                     parseInt(element.timestamp) ==
                     parseInt(readReceipts[read_index].watermark)
                   ) {
-                    console.log(
-                      readReceipts[index].id,
+                    /*console.log(
+                      readReceipts[read_index].id,
                       await MClient.getUserName(readReceipts[read_index].id)
-                    );
+                    );*/
 
                     var rData = {
-                      id: readReceipts[index].id,
-                      vueID: "readR_" + readReceipts[index].id,
+                      id: readReceipts[read_index].id,
+                      vueID: "readR_" + readReceipts[read_index].id,
                       name: await MClient.getUserName(
                         readReceipts[read_index].id
                       ),
@@ -210,7 +212,6 @@ export default {
                 this.convElems.unshift(data);
               }
 
-              console.log(readReceipts);
             }
             return true;
           }

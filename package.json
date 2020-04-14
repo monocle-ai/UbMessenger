@@ -27,6 +27,8 @@
     "@fortawesome/fontawesome-svg-core": "^1.2.27",
     "@fortawesome/free-solid-svg-icons": "^5.12.1",
     "@fortawesome/vue-fontawesome": "^0.1.9",
+    "@sentry/browser": "^5.15.4",
+    "@sentry/integrations": "^5.15.4",
     "bulma": "^0.8.0",
     "compressorjs": "^1.0.6",
     "core-js": "^3.6.4",
