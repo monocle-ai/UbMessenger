@@ -1,4 +1,6 @@
 # UbMessenger (Experimental)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FHenri2h%2FUbMessenger.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FHenri2h%2FUbMessenger?ref=badge_shield)
+
 
 This is a port of messenger to ubunut touch.
 
@@ -102,3 +104,7 @@ $ npm run cordova-build-only-www-browser # Build only files to src-cordova
 * If you are upgrading from an older release, please add `<hook type="after_prepare" src="../node_modules/vue-cli-plugin-cordova/serve-config-hook.js" />` to your config.xml
 
 * The devserver will run under https from now on, so make sure your rest & api endpoints are available under https, and have a correct CORS setup)
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FHenri2h%2FUbMessenger.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FHenri2h%2FUbMessenger?ref=badge_large)
